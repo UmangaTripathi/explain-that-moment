@@ -108,8 +108,6 @@ ME=$(az ad signed-in-user show --query id -o tsv | clean)
 FOUNDRY_ID=$(az cognitiveservices account show -g "$RG" -n "$(out foundryName)" --query id -o tsv | clean)
 az role assignment create --assignee-object-id "$ME" --assignee-principal-type User \
   --role "Cognitive Services OpenAI User" --scope "$FOUNDRY_ID" -o none
-az role assignment create --assignee-object-id "$ME" --assignee-principal-type User \
-  --role "Azure AI User" --scope "$FOUNDRY_ID" -o none
 
 cat > backend/.env <<EOF
 AZURE_OPENAI_ENDPOINT=$(out openAiEndpoint)

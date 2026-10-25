@@ -81,6 +81,7 @@ resource foundryProject 'Microsoft.CognitiveServices/accounts/projects@2025-06-0
 resource mainDeployment 'Microsoft.CognitiveServices/accounts/deployments@2025-06-01' = {
   parent: foundry
   name: mainModel.name
+  dependsOn: [ foundryProject ] // one operation at a time on the account
   sku: { name: 'GlobalStandard', capacity: mainModel.capacity }
   properties: {
     model: { format: 'OpenAI', name: mainModel.name, version: mainModel.version }
@@ -201,7 +202,6 @@ resource frontend 'Microsoft.Web/staticSites@2023-12-01' = {
 var roles = {
   acrPull: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
   openAiUser: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
-  azureAiUser: '53ca6127-db72-4b80-b1b0-d0d705a2b0e5'
 }
 
 resource acrPull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
@@ -221,16 +221,6 @@ resource openAiUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalId: backendIdentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roles.openAiUser)
-  }
-}
-
-resource azureAiUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: foundry
-  name: guid(foundry.id, backendIdentity.id, roles.azureAiUser)
-  properties: {
-    principalId: backendIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roles.azureAiUser)
   }
 }
 

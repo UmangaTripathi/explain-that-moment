@@ -8,8 +8,8 @@ class Settings(BaseSettings):
 
     azure_openai_endpoint: str = ""
     foundry_project_endpoint: str = ""
-    main_model_deployment: str = "gpt-5.4"
-    mini_model_deployment: str = "gpt-5.4-mini"
+    main_model_deployment: str = "gpt-5-mini"
+    mini_model_deployment: str = "gpt-4.1-mini"
     allowed_origins: str = "http://localhost:5173"
     app_version: str = "dev"
 

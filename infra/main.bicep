@@ -15,16 +15,16 @@ param backendPort int = 80
 
 @description('Primary reasoning model (Analyst, Verifier).')
 param mainModel object = {
-  name: 'gpt-5.4'
-  version: '2026-03-05'
-  capacity: 100 // thousands of tokens per minute
+  name: 'gpt-5-mini'
+  version: '2025-08-07'
+  capacity: 200 // thousands of tokens per minute
 }
 
 @description('Fast/cheap model (Narrator, Recap, translation).')
 param miniModel object = {
-  name: 'gpt-5.4-mini'
-  version: '2026-03-17'
-  capacity: 200
+  name: 'gpt-4.1-mini'
+  version: '2025-04-14'
+  capacity: 150
 }
 
 @description('Monthly budget in USD for the resource group.')

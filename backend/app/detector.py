@@ -60,7 +60,7 @@ class MomentDetector:
                 moments.append(self._super_sub(ev))
         elif ev.type == "shot" and ev.outcome != "goal" and (ev.xg or 0) >= BIG_CHANCE_XG:
             moments.append(self._big_chance(ev))
-        elif ev.type == "card" and ev.outcome == "red":
+        elif ev.type == "card" and ev.outcome in ("red", "second_yellow"):
             moments.append(self._red_card(ev))
 
         if ev.type == "shot" and ev.team in self.high_regains:
@@ -128,7 +128,8 @@ class MomentDetector:
         ids = ([foul.id] if foul else []) + [ev.id]
         return self._new(
             ev, "red_card", ids, 0.9,
-            f"RED CARD: {who} ({self.team_names[ev.team]}) sent off, down to 10 men",
+            f"RED CARD: {who} ({self.team_names[ev.team]}) sent off"
+            + (" for a second yellow" if ev.outcome == "second_yellow" else "") + ", down to 10 men",
         )
 
     def _pressing_win(self, regain: MatchEvent, shot: MatchEvent) -> KeyMoment:

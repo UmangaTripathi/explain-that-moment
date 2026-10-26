@@ -241,9 +241,9 @@ class Simulator:
         # Rare straight red, or a second yellow.
         straight_red = self.rng.random() < 0.04
         second_yellow = player.id in dfn.yellows
-        colour = "red" if (straight_red or second_yellow) else "yellow"
+        colour = "red" if straight_red else "second_yellow" if second_yellow else "yellow"
         self.emit(type="card", team=dfn.team.id, player=player.id, outcome=colour)
-        if colour == "red":
+        if colour != "yellow":
             dfn.red_cards += 1
             dfn.on_pitch = [p for p in dfn.on_pitch if p.id != player.id]
         else:

@@ -42,7 +42,8 @@ jobs:
         run: |
           az containerapp ingress update -g "${{ vars.AZURE_RG }}" -n "${{ vars.BACKEND_APP }}" --target-port 8000 -o none
           az containerapp update -g "${{ vars.AZURE_RG }}" -n "${{ vars.BACKEND_APP }}" \
-            --image "$IMAGE" --set-env-vars APP_VERSION=${GITHUB_SHA::7} -o none
+            --image "$IMAGE" --set-env-vars APP_VERSION=${GITHUB_SHA::7} \
+            --min-replicas 1 --max-replicas 1 -o none
 
       - name: Smoke test
         run: |

@@ -21,3 +21,4 @@ Thumbs.db
 
 # Bootstrap outputs
 infra/outputs.json
+*.tsbuildinfo

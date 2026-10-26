@@ -35,7 +35,8 @@ def test_demo_match_is_dramatic(demo_match):
 def test_detector_finds_every_goal_and_red_card(demo_match):
     moments = MomentDetector(demo_match).run()
     goals = [e for e in demo_match.events if e.type == "goal"]
-    reds = [e for e in demo_match.events if e.type == "card" and e.outcome == "red"]
+    reds = [e for e in demo_match.events
+            if e.type == "card" and e.outcome in ("red", "second_yellow")]
     assert sum(m.type == "goal" for m in moments) == len(goals)
     assert sum(m.type == "red_card" for m in moments) == len(reds)
 

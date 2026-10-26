@@ -71,6 +71,8 @@ class Claim(BaseModel):
     event_ids: list[str]
     status: Literal["pending", "verified", "rejected"] = "pending"
     reason: str | None = None
+    injected: bool = False  # red-team claim planted to test the Verifier
+    reason_handled: bool = Field(default=False, exclude=True)
 
 
 class MomentCard(BaseModel):
@@ -81,3 +83,5 @@ class MomentCard(BaseModel):
     language: str = "en"
     persona: str = "casual"
     verifier_rounds: int = 0
+    red_team: bool = False
+    trace: list[dict] = Field(default_factory=list)

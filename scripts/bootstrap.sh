@@ -69,15 +69,22 @@ az ad sp show --id "$APP_ID" -o none 2>/dev/null || az ad sp create --id "$APP_I
 SP_ID=$(az ad sp show --id "$APP_ID" --query id -o tsv | clean)
 
 # Jobs run in the "production" environment, so the OIDC subject is environment-scoped.
-SUBJECT="repo:${REPO}:environment:production"
-if ! az ad app federated-credential list --id "$APP_ID" --query "[].subject" -o tsv | clean | grep -qx "$SUBJECT"; then
-  az ad app federated-credential create --id "$APP_ID" --parameters "{
-    \"name\": \"github-production\",
-    \"issuer\": \"https://token.actions.githubusercontent.com\",
-    \"subject\": \"$SUBJECT\",
-    \"audiences\": [\"api://AzureADTokenExchange\"]
-  }" -o none
-fi
+# GitHub may send either the classic subject or the newer one with immutable owner/repo IDs.
+OWNER_ID=$(gh api "repos/$REPO" -q .owner.id)
+REPO_ID=$(gh api "repos/$REPO" -q .id)
+add_subject() {
+  if ! az ad app federated-credential list --id "$APP_ID" --query "[].subject" -o tsv | clean | grep -qxF "$2"; then
+    az ad app federated-credential create --id "$APP_ID" --parameters "{
+      \"name\": \"$1\",
+      \"issuer\": \"https://token.actions.githubusercontent.com\",
+      \"subject\": \"$2\",
+      \"audiences\": [\"api://AzureADTokenExchange\"]
+    }" -o none
+  fi
+}
+add_subject github-production "repo:${REPO}:environment:production"
+add_subject github-production-ids \
+  "repo:${REPO%%/*}@${OWNER_ID}/${REPO##*/}@${REPO_ID}:environment:production"
 
 echo "==> Granting the pipeline access (scoped to $RG only)"
 RG_SCOPE="/subscriptions/$SUB_ID/resourceGroups/$RG"
